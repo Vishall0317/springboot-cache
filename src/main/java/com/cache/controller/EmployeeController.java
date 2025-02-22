@@ -2,6 +2,7 @@ package com.cache.controller;
 
 import com.cache.entity.Employee;
 import com.cache.service.EmployeeService;
+import com.cache.service.OktaAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,11 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeController {
 
     EmployeeService employeeService;
+    OktaAuthService oktaAuthService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, OktaAuthService oktaAuthService) {
         this.employeeService = employeeService;
+        this.oktaAuthService = oktaAuthService;
     }
 
+    @GetMapping("/okta")
+    public String getOkta() {
+        System.out.println("getting okta......");
+       return  oktaAuthService.getOktaToken();
+    }
 
     @PostMapping("/save")
     public ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee) {
