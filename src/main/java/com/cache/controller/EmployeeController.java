@@ -29,7 +29,7 @@ public class EmployeeController {
     @GetMapping("/okta")
     public String getOkta() {
         System.out.println("getting okta......");
-       return  oktaAuthService.getOktaToken();
+        return oktaAuthService.getOktaToken();
     }
 
     @PostMapping("/save")
@@ -46,12 +46,12 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployee(@PathVariable("id") int id) {
         long start = System.currentTimeMillis();
-        System.out.println("start time: " + start);
+        //System.out.println("start time: " + start);
         Employee employee = employeeService.getEmployeeById(id);
         long end = System.currentTimeMillis();
-        System.out.println("end time: " + end);
-        long td= end-start;
-        System.out.println("diff in start and end time: " + td);
+        //System.out.println("end time: " + end);
+        long td = end - start;
+        //System.out.println("diff in start and end time: " + td);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
