@@ -1,7 +1,10 @@
 package com.cache.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,23 +18,24 @@ public class OktaAuthService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OktaAuthService.class);
 
     private WebClient webClient;
-    private final AtomicReference<String> oktaToken = new AtomicReference<>(null);
+    private AtomicReference<String> oktaToken = new AtomicReference<>(null);
 
     public OktaAuthService(WebClient webClient) {
         this.webClient = webClient;
     }
 
-    //    @Cacheable("oktaToken")
+    @Cacheable("oktaToken")
     public String getOktaToken() {
         log.debug("getting Okta token...");
         if (oktaToken.get() == null) {
+            log.debug("getting Okta token from cache...");
             refreshToken();
         }
         log.debug("Returning Okta token: {}", oktaToken.get());
         return oktaToken.get();
     }
 
-    //    @Scheduled(fixedRate = 7100000) // 1 hour 58 minutes
+//    @Scheduled(fixedRate = 6) // 1 hour 58 minutes
     public void refreshToken() {
         log.debug("Refreshing Okta token");
         String token = webClient.post()
@@ -43,5 +47,12 @@ public class OktaAuthService {
                 .bodyToMono(String.class)
                 .block();
         oktaToken.set(token);
+    }
+
+    @CacheEvict(value = "oktaToken", allEntries = true)
+    @Scheduled(fixedRate = 60000) // 1 minute
+    public void clearCache() {
+        System.out.println("🗑️ Clearing Okta token from cache...");
+        oktaToken.set(null); // Also clear the atomic reference
     }
 }
