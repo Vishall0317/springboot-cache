@@ -28,7 +28,7 @@ public class EmployeeController {
 
     @GetMapping("/okta")
     public String getOkta() {
-        System.out.println("getting okta......");
+        System.out.println("getting okta: "+ oktaAuthService.getOktaToken());
         return oktaAuthService.getOktaToken();
     }
 

@@ -20,7 +20,7 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("oktaToken");
         cacheManager.setCaffeine(Caffeine.newBuilder()
                 .expireAfterWrite(2, TimeUnit.SECONDS) // 🔹 Remove token after 1 min
-                .maximumSize(1)
+                .maximumSize(100)
         );
         return cacheManager;
     }
